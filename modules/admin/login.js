@@ -134,12 +134,14 @@ const loginLoad = () => {
       }),
     }).then(async (res) => {
       res = JSON.parse(JSON.parse(res).messege);
-      const { result, data, messege, backup } = res;
+      const { result, data, messege, backup, favorite } = res;
       if (result) {
         document.querySelector("#root").innerHTML = userPage;
         document.querySelector("#backupEmail").value = backup ? backup : "";
+        document.querySelector("#favoriteItems").value =  favorite ? favorite : "";
         d.database = messege;
         d.backup = backup;
+        d.favorite = favorite;
         addUserLoad(data);
       } else {
         document.querySelector("#login-error").style.display = "block";

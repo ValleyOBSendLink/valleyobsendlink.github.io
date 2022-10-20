@@ -341,8 +341,8 @@ const fileListCreate = async (files) => {
     let icon = "file.svg";
     if (file.type == "application/pdf") {
       icon = "pdf.svg";
-      if (file.size >= 10 * 2 ** 20) {
-        error = "File size > 5MB.";
+      if (file.size >= 50 * 2 ** 20) {
+        error = "File size > 50MB.";
       } else {
         error = "";
         filesListObj[fileNo] = {

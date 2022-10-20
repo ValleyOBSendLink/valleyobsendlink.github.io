@@ -25,7 +25,9 @@ const homePage = `
                 placeholder="Search"
                 spellchaeck="false"
                 onfocus="this.autocomplete='on'"
+                list="favoriteLists"
               />
+              <datalist id="favoriteLists"></datalist>
             </form>
             <span id="sortingBtn" class="ic-dv arrow-ic">
               <a href="javascript:void(0);">
@@ -45,6 +47,7 @@ const homePage = `
                   placeholder="Copy & Paste Email"
                   oninput="inputPrevent(event)"
                   spellcheck="false"
+                  onfocus="this.autocomplete='on'"
                 />
                 <button type="submit" id="emailSendBtn" class="custom-btn sendBtn">Send</button>
                 <div
@@ -212,9 +215,7 @@ const showData = (data, type = "") => {
       id.id
     }" type="checkbox" name="" id="file_${id.id}" />
       <label for="file_${id.id}" style="color: #004a7f"
-        ><span style="margin: 0 10px; font-family: 'FontAwesome';">${
-          id.id
-        }.</span>${x[0].substr(1)}</label
+        >${x[0].substr(1)}</label
       >
     </div>
     `;
@@ -226,36 +227,27 @@ const showData = (data, type = "") => {
   `;
 
   loading.style.display = "none";
-  sortingLoad(0, data, type, showData, undefined, (index) => {
-    let sortValue = document.querySelector("#sortValue");
-    if (sortValue.innerText == "Sort by Number") {
-      index = 2;
-    }
-    return index;
-  });
+  sortingLoad(0, data, type, showData, undefined, document.querySelector("#sortValue"));
   data__ = data;
   type__ = type;
 };
 
 const homeLoad = (data) => {
-  const { post, GAS, database } = d;
+  const { post, GAS, database, favorite } = d;
   commonLoad();
   showData(data);
-  searchLoad(data, showData, [0], null);
+  searchLoad(data, showData, [0], null, String(favorite).split("\n"));
   let dropdownMenuAll = document.querySelectorAll(".dropdown-menu a");
   let sortValue = document.querySelector("#sortValue");
   let sortingBtn = document.querySelector("#sortingBtn");
-  let selectFilesList = document.querySelectorAll("#selectFilesList input");
+  let favoriteLists = document.querySelector("#favoriteLists");
 
+  favoriteLists.innerHTML = "<option>" + String(favorite).split("\n").join("</option><option>") + "</option>"
+  
   for (let x of dropdownMenuAll) {
     x.onclick = () => {
       sortValue.innerText = x.innerText;
-      sortingLoad(0, data__, type__, showData, undefined, (index) => {
-        if (sortValue.innerText == "Sort by Number") {
-          index = 2;
-        }
-        return index;
-      });
+      sortingLoad(0, data__, type__, showData, undefined, document.querySelector("#sortValue"));
       sortingBtn.click();
     };
   }
@@ -265,6 +257,8 @@ const homeLoad = (data) => {
   let error = document.querySelector("#error");
   let loading = document.querySelector("#loading");
   emailForm.onsubmit = (e) => {
+    let selectFilesList = document.querySelectorAll("#selectFilesList input");
+
     e.preventDefault();
 
     error.style.display = "none";

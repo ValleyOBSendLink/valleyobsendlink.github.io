@@ -115,12 +115,13 @@ const loginLoad = () => {
       }),
     }).then(async (res) => {
       res = JSON.parse(JSON.parse(res).messege);
-      const { result, data, messege, history, database } = res;
+      const { result, data, messege, history, database, favorite} = res;
       if (result && messege != "ip") {
         document.querySelector("#root").innerHTML = homePage;
         d.database = messege;
         d.history = history;
         d.$database = database;
+        d.favorite = favorite;
         homeLoad(data);
       } else if (result && messege == "ip") {
         document.querySelector("#login-error").innerText =

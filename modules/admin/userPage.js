@@ -89,6 +89,13 @@ const userPage = `
               <button
                 class="custom-btn"
                 data-toggle="modal"
+                data-target="#favoriteModal"
+              >
+                Favorite
+              </button>
+              <button
+                class="custom-btn"
+                data-toggle="modal"
                 data-target="#changePasswordModal"
               >
                 Change Password
@@ -288,6 +295,84 @@ const userPage = `
                   display: none;
                 "
                 id="backup-success"
+              >
+                Success!
+              </div>
+            </form>
+          </section>
+          <!-- custom-form-sec -->
+        </div>
+        <!-- modal-body -->
+      </div>
+    </div>
+  </div>
+  <!-- modal -->
+
+  <!-- Modal backup -->
+  <div
+    class="modal fade custom-modal"
+    id="favoriteModal"
+    tabindex="-1"
+    role="dialog"
+    aria-hidden="true"
+  >
+    <div
+      class="modal-dialog modal-dialog-centered modal-dialog-scrollable"
+      role="document"
+    >
+      <div class="modal-content">
+        <div class="modal-header">
+          <button
+            type="button"
+            class="close ml-auto"
+            data-dismiss="modal"
+            aria-label="Close"
+          >
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+
+        <div class="modal-body">
+          <h3 class="modal-title text-center">Favorite</h3>
+
+          <section class="custom-form-sec">
+            <form id="favorite-form" class="icon-form" action="" method="post">
+              <div class="mdl-input-bx">
+                <label>Favorite Items</label>
+                <textarea
+                  name=""
+                  id="favoriteItems"
+                  class="form-control"
+                  autocomplete="off"
+                  placeholder="Enter Favorite Items"
+                  spellcheck="false"
+                ></textarea>
+              </div>
+
+              <button id="favoriteBtn" type="submit" class="custom-btn popSubmit">
+                Favorite
+              </button>
+              <div
+                style="
+                  color: red;
+                  text-align: center;
+                  font-size: 14px;
+                  margin-top: 15px;
+                  display: none;
+                "
+                id="favorite-error"
+              >
+                Please try again.
+              </div>
+              <div
+                style="
+                  color: green;
+                  text-align: center;
+                  font-size: 14px;
+                  margin-top: 15px;
+                  display: none;
+                "
+                id="favorite-success"
               >
                 Success!
               </div>

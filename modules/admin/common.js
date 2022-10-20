@@ -1,5 +1,5 @@
 import { d } from "../../asset/js/custom.lib.js";
-import { searchLoad, sortingLoad, download } from "../common.js";
+import { searchLoad, sortingLoad, download, breakLine, createPdf } from "../common.js";
 import { login, loginLoad } from "./login.js";
 import { addDocumentsLoad, documentsPage } from "./documentsPage.js";
 import { userPage, addUserLoad } from "./userPage.js";
@@ -11,11 +11,12 @@ const commonLoad = (type = "") => {
   if (type) {
     backupFormLoad();
     changePasswordLoad();
+    favoriteLoad();
   }
 };
 
 const usersLoad = () => {
-  const { GAS, post, database, backup } = d;
+  const { GAS, post, database, backup, favorite } = d;
   let button = document.querySelector("#homeBtn");
   button.onclick = () => {
     document.querySelector("#root").innerHTML = userPage;
@@ -31,6 +32,9 @@ const usersLoad = () => {
         if (result) {
           addUserLoad(data);
           document.querySelector("#backupEmail").value = backup ? backup : "";
+          document.querySelector("#favoriteItems").value = favorite
+            ? favorite
+            : "";
         }
       })
       .catch((err) => {
@@ -102,6 +106,53 @@ const backupFormLoad = () => {
       .catch((err) => {
         console.log(err);
         button.innerText = "Backup";
+        error.innerText = "Error Found! Please try again.";
+        error.style.display = "block";
+        loading.style.display = "none";
+      });
+  };
+};
+
+const favoriteLoad = () => {
+  const { GAS, post, database } = d;
+  let favorite = document.querySelector("#favoriteItems");
+  let button = document.querySelector("#favoriteBtn");
+  let error = document.querySelector("#favorite-error");
+  let success = document.querySelector("#favorite-success");
+
+  document.forms["favorite-form"].onsubmit = (e) => {
+    e.preventDefault();
+    button.innerText = "Processing..";
+    error.style.display = "none";
+    success.style.display = "none";
+    loading.style.display = "block";
+    d.favorite = favorite.value.trim();
+
+    post(GAS, {
+      type: 18,
+      data: JSON.stringify({
+        items: favorite.value.trim(),
+        database: database,
+      }),
+    })
+      .then((res) => {
+        res = JSON.parse(JSON.parse(res).messege);
+        const { result } = res;
+        if (result) {
+          button.innerText = "Favorite";
+          success.innerText = "Successfully set up favorite items!";
+          success.style.display = "block";
+          loading.style.display = "none";
+        } else {
+          button.innerText = "Favorite";
+          error.innerHTML = "Error Found! Please try again.";
+          error.style.display = "block";
+          loading.style.display = "none";
+        }
+      })
+      .catch((err) => {
+        console.log(err);
+        button.innerText = "Favorite";
         error.innerText = "Error Found! Please try again.";
         error.style.display = "block";
         loading.style.display = "none";
@@ -184,4 +235,4 @@ const logoutLoad = () => {
   };
 };
 
-export { commonLoad, searchLoad, sortingLoad, download };
+export { commonLoad, searchLoad, sortingLoad, download, breakLine, createPdf };

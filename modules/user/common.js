@@ -1,5 +1,5 @@
 import { d } from "../../asset/js/custom.lib.js";
-import { searchLoad, sortingLoad, download } from "../common.js";
+import { searchLoad, sortingLoad, download, breakLine, createPdf } from "../common.js";
 import { login, loginLoad } from "./login.js";
 import { historyPage, historyLoad } from "./historyPage.js";
 import { homeLoad, homePage } from "./homePage.js";
@@ -63,4 +63,4 @@ const inputPrevent = (e) => {
 
 window.inputPrevent = inputPrevent;
 
-export { commonLoad, searchLoad, sortingLoad, download };
+export { commonLoad, searchLoad, sortingLoad, download, breakLine, createPdf };

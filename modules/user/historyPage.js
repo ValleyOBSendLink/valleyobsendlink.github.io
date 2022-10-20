@@ -1,5 +1,5 @@
 import { d } from "../../asset/js/custom.lib.js";
-import { commonLoad, searchLoad, sortingLoad, download } from "./common.js";
+import { commonLoad, searchLoad, sortingLoad, download, breakLine, createPdf } from "./common.js";
 
 const historyPage = `
 <div>
@@ -126,6 +126,7 @@ const showData = (data, type = "") => {
       id,
       file: x[3].substr(1),
       name: x[2].substr(1),
+      info: x
     });
 
     const downloadBtn = `
@@ -162,10 +163,14 @@ const showData = (data, type = "") => {
   for (let x of idList) {
     //console.log(x)
     let exportBtn = document.querySelector(`[download='${x.id}']`);
-    // delete
+    const object = {
+      "Date/Time": dateCovert(x.info[0].substr(1)) + " - " + getTime(x.info[0].substr(1)),
+      Email: x.info[1].substr(1),
+      "File Name": breakLine(x.info[2].substr(1)),
+    };
     if (exportBtn) {
-      exportBtn.onclick = () => {
-        download(x.file, x.name);
+      exportBtn.onclick = async () => {
+        download(x.file, object.Email + "_" + x.name, object);
       };
     }
   }

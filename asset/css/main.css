@@ -118,7 +118,7 @@ button {
 }
 .custom-table th,
 .custom-table td {
-  padding: 15px;
+  padding: 10px;
   min-width: 180px;
 }
 .custom-table th .icon,
@@ -588,6 +588,7 @@ button {
 .select-file-wrapp .input-checkbox {
   margin-bottom: 7px;
   font-size: 18px;
+  width: max-content;
 }
 .select-file-wrapp .input-checkbox input[type="checkbox"] {
   height: 18px;
@@ -596,7 +597,8 @@ button {
 }
 
 .drag-and-drop-wrapp {
-  height: calc(100% - 50px);
+  /* height: calc(100% - 50px); */
+  height: calc(80vh - 50px);
   margin: 25px;
   /*
   .file__input--label:after {
