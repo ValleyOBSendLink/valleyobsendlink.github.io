@@ -1,7 +1,6 @@
 import { d } from "../asset/js/custom.lib.js";
 const { PDFDocument, StandardFonts } = PDFLib;
 
-
 // search load
 const searchLoad = (data, callback, indexs, type = null, favoriteItems) => {
   let search = document.querySelector("#search");
@@ -30,15 +29,14 @@ const searchLoad = (data, callback, indexs, type = null, favoriteItems) => {
     }
   };
 
-  if(favoriteItems){
+  if (favoriteItems) {
     let finalData = [];
     let usedData = [];
     for (let i = 0; i < data.length; i++) {
       favoriteItems.forEach((value) => {
         // console.log(value)
         if (
-          data[i][0].toLowerCase().indexOf(value.toLowerCase()) >
-            -1 &&
+          data[i][0].toLowerCase().indexOf(value.toLowerCase()) > -1 &&
           usedData.indexOf(i) == -1
         ) {
           data[i].push(i + 1);
@@ -48,13 +46,35 @@ const searchLoad = (data, callback, indexs, type = null, favoriteItems) => {
       });
     }
     callback(finalData, 1);
+    search.onchange = () => {
+      let finalData = [];
+      let usedData = [];
+      for (let i = 0; i < data.length; i++) {
+        indexs.forEach((value) => {
+          if (
+            data[i][value].toLowerCase().indexOf(search.value.toLowerCase()) >
+              -1 &&
+            usedData.indexOf(i) == -1
+          ) {
+            data[i].push(i + 1);
+            finalData.push(data[i]);
+            usedData.push(i);
+          }
+        });
+      }
+      if (type === null) callback(finalData, 1);
+      else {
+        type.data = finalData;
+        callback(type, 1);
+      }
+    };
   }
 };
 
 // sortin load
 const sortingLoad = (index, data, type, callback, res = null, dom = "") => {
   let condition = false;
-  if(dom && dom.innerText == "Sort by Number"){
+  if (dom && dom.innerText == "Sort by Number") {
     condition = true;
   }
   let sortingBtn = document.querySelector("#sortingBtn");
@@ -72,13 +92,13 @@ const sortingLoad = (index, data, type, callback, res = null, dom = "") => {
       }
 
       data = data.sort((a, b) => {
-        if(condition){
+        if (condition) {
           let x = a[index].substr(1).substr(0, a[index].substr(1).indexOf("."));
           let y = b[index].substr(1).substr(0, b[index].substr(1).indexOf("."));
           return Number(y) - Number(x);
         }
         //console.log(isNaN(Number(a)), a)
-        if(isNaN(Number(a[index])) == false){
+        if (isNaN(Number(a[index])) == false) {
           return a[index] - b[index];
         }
         let x = a[index].substr(1).toLowerCase();
@@ -122,7 +142,7 @@ const download = async (id, fileName, obj) => {
     ).messege
   ).data;
 
-  data = await createPdf(obj, "data:application/pdf;base64," + data)
+  data = await createPdf(obj, "data:application/pdf;base64," + data);
   const anchor = document.createElement("a");
   if ("download" in anchor) {
     //html5 A[download]
@@ -224,5 +244,4 @@ const createPdf = async (obj, pdf) => {
   return pdfBytes;
 };
 
-
-export { searchLoad, sortingLoad, download, breakLine, createPdf};
+export { searchLoad, sortingLoad, download, breakLine, createPdf };
