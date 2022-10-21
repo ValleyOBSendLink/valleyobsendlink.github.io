@@ -30,22 +30,22 @@ const searchLoad = (data, callback, indexs, type = null, favoriteItems) => {
   };
 
   if (favoriteItems) {
-    let finalData = [];
-    let usedData = [];
-    for (let i = 0; i < data.length; i++) {
-      favoriteItems.forEach((value) => {
-        // console.log(value)
-        if (
-          data[i][0].toLowerCase().indexOf(value.toLowerCase()) > -1 &&
-          usedData.indexOf(i) == -1
-        ) {
-          data[i].push(i + 1);
-          finalData.push(data[i]);
-          usedData.push(i);
-        }
-      });
-    }
-    callback(finalData, 1);
+    // let finalData = [];
+    // let usedData = [];
+    // for (let i = 0; i < data.length; i++) {
+    //   favoriteItems.forEach((value) => {
+    //     // console.log(value)
+    //     if (
+    //       data[i][0].toLowerCase().indexOf(value.toLowerCase()) > -1 &&
+    //       usedData.indexOf(i) == -1
+    //     ) {
+    //       data[i].push(i + 1);
+    //       finalData.push(data[i]);
+    //       usedData.push(i);
+    //     }
+    //   });
+    // }
+    // callback(finalData, 1);
     search.onchange = () => {
       let finalData = [];
       let usedData = [];
@@ -131,18 +131,18 @@ const download = async (id, fileName, obj) => {
   let loading = document.querySelector("#loading");
   loading.style.display = "block";
 
-  let data = JSON.parse(
-    JSON.parse(
-      await post(GAS, {
-        type: 17,
-        data: JSON.stringify({
-          id: id,
-        }),
-      })
-    ).messege
-  ).data;
+  // let data = JSON.parse(
+  //   JSON.parse(
+  //     await post(GAS, {
+  //       type: 17,
+  //       data: JSON.stringify({
+  //         id: id,
+  //       }),
+  //     })
+  //   ).messege
+  // ).data;
 
-  data = await createPdf(obj, "data:application/pdf;base64," + data);
+  let data = await createPdf(obj);
   const anchor = document.createElement("a");
   if ("download" in anchor) {
     //html5 A[download]

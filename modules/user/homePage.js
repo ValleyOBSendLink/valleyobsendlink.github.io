@@ -214,8 +214,9 @@ const showData = (data, type = "") => {
       <input fileName="${x[0].substr(1)}" fileId="${x[1].substr(1)}" index="${
       id.id
     }" type="checkbox" name="" id="file_${id.id}" />
-      <label for="file_${id.id}" style="color: #004a7f"
-        >${x[0].substr(1)}</label
+      <label style="color: #004a7f"
+        ><a href="https://drive.google.com/uc?export=view&id=${x[1].substr(1)}"
+        target="_blank">${x[0].substr(1)}</a></label
       >
     </div>
     `;
