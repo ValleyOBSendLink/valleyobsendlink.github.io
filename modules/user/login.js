@@ -117,6 +117,7 @@ const loginLoad = () => {
       res = JSON.parse(JSON.parse(res).messege);
       const { result, data, messege, history, database, favorite} = res;
       if (result && messege != "ip") {
+        d.userEmail = username.value.trim();
         document.querySelector("#root").innerHTML = homePage;
         d.database = messege;
         d.history = history;

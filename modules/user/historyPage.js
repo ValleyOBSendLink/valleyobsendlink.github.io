@@ -1,5 +1,14 @@
 import { d } from "../../asset/js/custom.lib.js";
-import { commonLoad, searchLoad, sortingLoad, download, breakLine, createPdf } from "./common.js";
+import IDB from "../../asset/js/idb.js";
+
+import {
+  commonLoad,
+  searchLoad,
+  sortingLoad,
+  download,
+  breakLine,
+  createPdf,
+} from "./common.js";
 
 const historyPage = `
 <div>
@@ -113,6 +122,9 @@ const getTime = (date) => {
 };
 
 const showData = (data, type = "") => {
+  // console.log(data);
+  data.sort((a, b) => new Date(b[0].substr(1)).getTime() - new Date(a[0].substr(1)).getTime());
+  // console.log(data);
   const { dateCovert } = d;
   let table = document.querySelector(".custom-table");
   let loading = document.querySelector("#loading");
@@ -126,7 +138,7 @@ const showData = (data, type = "") => {
       id,
       file: x[3].substr(1),
       name: x[2].substr(1),
-      info: x
+      info: x,
     });
 
     const downloadBtn = `
@@ -164,7 +176,8 @@ const showData = (data, type = "") => {
     //console.log(x)
     let exportBtn = document.querySelector(`[download='${x.id}']`);
     const object = {
-      "Date/Time": dateCovert(x.info[0].substr(1)) + " - " + getTime(x.info[0].substr(1)),
+      "Date/Time":
+        dateCovert(x.info[0].substr(1)) + " - " + getTime(x.info[0].substr(1)),
       Email: x.info[1].substr(1),
       "File Name": breakLine(x.info[2].substr(1)),
     };
@@ -180,8 +193,15 @@ const showData = (data, type = "") => {
   sortingLoad(1, data, type, showData);
 };
 
+const historyLoad = async () => {
+  const idb = new IDB("com.valleyobSendEmailApp");
+  await idb.createDataBase(d.userEmail, {
+    keyPath: "id",
+  });
 
-const historyLoad = () => {
+  let data = await idb.getAllValues("value");
+  // console.log(data);
+  let oldTime = data.length ? data[data.length - 1][0] : "";
   const { post, GAS, database, history } = d;
   commonLoad();
   post(GAS, {
@@ -189,13 +209,44 @@ const historyLoad = () => {
     data: JSON.stringify({
       database: database,
       history: history,
+      oldLength: data.length,
+      oldTime,
     }),
   })
     .then(async (res) => {
+      //console.log(res);
       res = JSON.parse(JSON.parse(res).messege);
       if (res.result) {
-        showData(res.data);
-        searchLoad(res.data, showData, [1, 2]);
+        let resData = res.data;
+        const finalData = [];
+        resData.forEach((element) => {
+          finalData.push({
+            id: element[4],
+            value: element,
+          });
+        });
+
+        if (res.type != "update") {
+          await idb.delete();
+          await idb.createDataBase(d.userEmail, {
+            keyPath: "id",
+          });
+        }
+        if (finalData.length) await idb.add(finalData);
+        data = await idb.getAllValues("value");
+
+        const renderData = [];
+        data.forEach(async (v) => {
+          if (res.now - v[0] > d.history * 24 * 60 * 60 * 1000) {
+            await idb.remove(v[4]);
+          } else {
+            renderData.push(v);
+          }
+        });
+
+        // console.log(renderData);
+        showData(renderData);
+        searchLoad(renderData, showData, [1, 2]);
       } else {
         console.log(res);
       }
