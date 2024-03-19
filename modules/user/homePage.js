@@ -1,5 +1,6 @@
 import { d } from "../../asset/js/custom.lib.js";
-import { commonLoad, sortingLoad, searchLoad } from "./common.js";
+import IDB from "../../asset/js/idb.js";
+import { commonLoad, searchLoad, sortingLoad } from "./common.js";
 
 const homePage = `
 <div>
@@ -125,7 +126,7 @@ const homePage = `
               </div>
             </div>
 
-            <div class="file-upload-section-wrapp" style="max-width: 1200px">
+            <div id="selectFilesListDiv" class="file-upload-section-wrapp" style="max-width: 1200px">
               <div class="row">
                 <div class="col-md-6">
                   <div id="selectFilesList" class="select-file-wrapp" style="margin-top: 67px">
@@ -134,7 +135,15 @@ const homePage = `
                   <!-- select-file-wrapp -->
                 </div>
                 <!-- col -->
+
+                <div class="col-md-6">
+                  <div id="commonUsedFiles" class="select-file-wrapp" style="margin-top: 67px">
+                    
+                  </div>
+                  <!-- common-file-wrapp -->
+                </div>
               </div>
+              
               <!-- row -->
             </div>
             <!-- file-upload-section-wrapp -->
@@ -228,27 +237,90 @@ const showData = (data, type = "") => {
   `;
 
   loading.style.display = "none";
-  sortingLoad(0, data, type, showData, undefined, document.querySelector("#sortValue"));
+  sortingLoad(
+    0,
+    data,
+    type,
+    showData,
+    undefined,
+    document.querySelector("#sortValue")
+  );
   data__ = data;
   type__ = type;
 };
 
-const homeLoad = (data) => {
-  const { post, GAS, database, favorite } = d;
+const showCommonUsedData = (data) => {
+  let commonUsedFilesList = document.querySelector("#commonUsedFiles");
+  let result = "";
+  let index = 1;
+  for (let x of data) {
+    result += `
+    <div class="input-checkbox">
+      <input fileName="${x[0].substr(1)}" fileId="${x[1].substr(
+      1
+    )}" index="${index}" type="checkbox" name="" id="file_used_${index}" />
+      <label style="color: #004a7f"
+        ><a href="https://drive.google.com/uc?export=view&id=${x[1].substr(1)}"
+        target="_blank">${x[0].substr(1)}</a></label
+      >
+    </div>
+    `;
+    index++;
+  }
+
+  commonUsedFilesList.innerHTML = `
+	${result}
+  `;
+};
+
+const homeLoad = async (data) => {
+  const { post, GAS, database, favorite, userEmail } = d;
+  const idb = new IDB("com.valleyobSendEmailApp");
+  await idb.createDataBase(userEmail + "_commonUsed", {
+    keyPath: "id",
+  });
+
   commonLoad();
   showData(data);
+
+  let commonUsedDataAll = await idb.getAllValues("id");
+
+  let allDataObj = {};
+  for (let x of data) {
+    allDataObj[x[1].substr(1)] = x;
+  }
+
+  for (let x of commonUsedDataAll) {
+    if (!allDataObj[x]) {
+      await idb.remove(x);
+    }
+  }
+
+  let commonUsedData = await idb.getAll();
+  commonUsedData.sort((a, b) => b.used - a.used);
+  showCommonUsedData(commonUsedData.map((x) => x.value));
   searchLoad(data, showData, [0], null, String(favorite).split("\n"));
   let dropdownMenuAll = document.querySelectorAll(".dropdown-menu a");
   let sortValue = document.querySelector("#sortValue");
   let sortingBtn = document.querySelector("#sortingBtn");
   let favoriteLists = document.querySelector("#favoriteLists");
 
-  favoriteLists.innerHTML = "<option>" + String(favorite).split("\n").join("</option><option>") + "</option>"
-  
+  favoriteLists.innerHTML =
+    "<option>" +
+    String(favorite).split("\n").join("</option><option>") +
+    "</option>";
+
   for (let x of dropdownMenuAll) {
     x.onclick = () => {
       sortValue.innerText = x.innerText;
-      sortingLoad(0, data__, type__, showData, undefined, document.querySelector("#sortValue"));
+      sortingLoad(
+        0,
+        data__,
+        type__,
+        showData,
+        undefined,
+        document.querySelector("#sortValue")
+      );
       sortingBtn.click();
     };
   }
@@ -257,13 +329,17 @@ const homeLoad = (data) => {
   let button = document.querySelector("#emailSendBtn");
   let error = document.querySelector("#error");
   let loading = document.querySelector("#loading");
-  emailForm.onsubmit = (e) => {
-    let selectFilesList = document.querySelectorAll("#selectFilesList input");
+  emailForm.onsubmit = async (e) => {
+    let selectFilesList = document.querySelectorAll(
+      "#selectFilesListDiv input"
+    );
 
     e.preventDefault();
 
     error.style.display = "none";
-    if(/^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/.test(email.value) == false){
+    if (
+      /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/.test(email.value) == false
+    ) {
       error.innerText = "Please paste valid email.";
       error.style.display = "block";
       return;
@@ -278,8 +354,31 @@ const homeLoad = (data) => {
           id: input.getAttribute("fileId"),
           name: input.getAttribute("fileName"),
         });
+
+        let isExistOnCommonUsed = await idb.get(input.getAttribute("fileId"));
+
+        if (!isExistOnCommonUsed) {
+          await idb.add({
+            id: input.getAttribute("fileId"),
+            value: [
+              "x" + input.getAttribute("fileName"),
+              "x" + input.getAttribute("fileId"),
+            ],
+            used: 1,
+            ts: new Date().getTime(),
+          });
+        } else {
+          await idb.put(input.getAttribute("fileId"), {
+            used: isExistOnCommonUsed.used + 1,
+            ts: new Date().getTime(),
+          });
+        }
       }
     }
+
+    let commonUsedData = await idb.getAll();
+    commonUsedData.sort((a, b) => b.used - a.used);
+    showCommonUsedData(commonUsedData.map((x) => x.value));
 
     if (data.length == 0) {
       error.innerText = "Please select a files.";
@@ -327,4 +426,4 @@ const homeLoad = (data) => {
   };
 };
 
-export { homePage, homeLoad };
+export { homeLoad, homePage };
