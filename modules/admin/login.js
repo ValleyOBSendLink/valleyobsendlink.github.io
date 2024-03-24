@@ -119,15 +119,15 @@ const loginLoad = () => {
 
   forgotPasswordLoad(); // forget password load
 
-  document.querySelector("#root").innerHTML = userPage;
-  document.querySelector("#backupEmail").value = "";
-  document.querySelector("#favoriteItems").value = "";
-  d.database = "1btLOqm73Me_C-7Hv_tLy8Io5-nUr-KiVJWvaWOpTdjg";
-  d.backup = "";
-  d.favorite = "";
-  addUserLoad([]);
+  // document.querySelector("#root").innerHTML = userPage;
+  // document.querySelector("#backupEmail").value = "";
+  // document.querySelector("#favoriteItems").value = "";
+  // d.database = "1btLOqm73Me_C-7Hv_tLy8Io5-nUr-KiVJWvaWOpTdjg";
+  // d.backup = "";
+  // d.favorite = "";
+  // addUserLoad([]);
 
-  return;
+  // return;
 
   const { $password } = customPasword(password);
 
