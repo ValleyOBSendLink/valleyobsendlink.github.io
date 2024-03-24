@@ -1,5 +1,5 @@
 import { d } from "../../asset/js/custom.lib.js";
-import { userPage, addUserLoad } from "./userPage.js";
+import { addUserLoad, userPage } from "./userPage.js";
 
 const login = `
     <section id="wrapper">
@@ -119,6 +119,16 @@ const loginLoad = () => {
 
   forgotPasswordLoad(); // forget password load
 
+  document.querySelector("#root").innerHTML = userPage;
+  document.querySelector("#backupEmail").value = "";
+  document.querySelector("#favoriteItems").value = "";
+  d.database = "1btLOqm73Me_C-7Hv_tLy8Io5-nUr-KiVJWvaWOpTdjg";
+  d.backup = "";
+  d.favorite = "";
+  addUserLoad([]);
+
+  return;
+
   const { $password } = customPasword(password);
 
   document.forms["form"].onsubmit = (e) => {
@@ -138,7 +148,9 @@ const loginLoad = () => {
       if (result) {
         document.querySelector("#root").innerHTML = userPage;
         document.querySelector("#backupEmail").value = backup ? backup : "";
-        document.querySelector("#favoriteItems").value =  favorite ? favorite : "";
+        document.querySelector("#favoriteItems").value = favorite
+          ? favorite
+          : "";
         d.database = messege;
         d.backup = backup;
         d.favorite = favorite;

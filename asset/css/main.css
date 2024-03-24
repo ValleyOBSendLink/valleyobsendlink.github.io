@@ -764,6 +764,7 @@ button {
   text-transform: capitalize;
   padding: 10px 20px;
   letter-spacing: normal;
+  margin-bottom: 10px;
 }
 
 @keyframes blink {
@@ -1179,7 +1180,7 @@ button {
   padding: 8px 15px;
 }
 
-#loginBtn:disabled{
+#loginBtn:disabled {
   cursor: not-allowed;
 }
 

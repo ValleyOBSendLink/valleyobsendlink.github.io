@@ -67,10 +67,20 @@ const documentsPage = `
         <div class="container-fluid">
           <div class="user-backup-table-wrapp">
             <div class="user-popup-btns">
+              <button id="showMostCommonlyUsedBtn" class="custom-btn">
+                Show Most commonly used
+              </button>
+             
               <button id="selectAllBtn" class="custom-btn">Select all</button>
+
+              <button id="moveToCommonlyUsed" class="custom-btn checkDeleteBtn" style="display: none">
+                Add to Most commonly used
+              </button>
+              
               <button id="deleteBtn" class="custom-btn checkDeleteBtn" style="display: none">
                 Delete
               </button>
+              
             </div>
             <!-- user-popup-btns -->
 
@@ -157,6 +167,29 @@ const documentsPage = `
   </section>
   <!-- wrapper -->
 
+  <!-- Modal Thank you Success message -->
+	<div class="modal fade custom-modal verifiedModalClass" id="statusModel" tabindex="-1" role="dialog" aria-hidden="true">
+		<div class="modal-dialog modal-dialog-centered modal-dialog-scrollable" role="document">
+			<div class="modal-content">
+				<div class="modal-header">
+					<button type="button" class="close ml-auto" data-dismiss="modal" aria-label="Close">
+						<span aria-hidden="true">&times;</span>
+					</button>
+				</div>
+
+				<div class="modal-body text-center">
+					<div class="img mb-4">
+						<img src="asset/img/verified.png" alt="modelImg">
+					</div>
+					<h3 class="modal-title text-center">Success</h3>
+					<p>Please Check Your Email.</p>
+
+				</div><!-- modal-body -->
+			</div>
+		</div>
+	</div>
+	<!-- modal -->
+
   <div style="" id="loading">
     <div class="spinner">
       <div class="rect1"></div>
@@ -172,17 +205,20 @@ const documentsPage = `
 const checkedUpdate = () => {
   let selectFilesList = document.querySelectorAll("#selectFilesList input");
   let deleteBtn = document.querySelector("#deleteBtn");
+  let moveToCommonlyUsed = document.querySelector("#moveToCommonlyUsed");
   $(deleteBtn).hide();
+  $(moveToCommonlyUsed).hide();
   for (let input of selectFilesList) {
     if (input.checked == true) {
       $(deleteBtn).show();
+      $(moveToCommonlyUsed).show();
       return;
     }
   }
 };
 
 const deleteFiles = async () => {
-  const { post, GAS, database} = d;
+  const { post, GAS, database } = d;
   let selectFilesList = document.querySelectorAll("#selectFilesList input");
   let deleteBtn = document.querySelector("#deleteBtn");
   let loading = document.querySelector("#loading");
@@ -211,11 +247,54 @@ const deleteFiles = async () => {
   $(deleteBtn).hide();
 };
 
+const addToCommonlyUsed = async () => {
+  const { post, GAS, database } = d;
+  let selectFilesList = document.querySelectorAll("#selectFilesList input");
+  let moveToCommonlyUsed = document.querySelector("#moveToCommonlyUsed");
+  let loading = document.querySelector("#loading");
+  moveToCommonlyUsed.disabled = true;
+  moveToCommonlyUsed.innerText = "Processing..";
+
+  const data = [];
+  for (let input of selectFilesList) {
+    if (input.checked == true) {
+      data.push(input.getAttribute("file"));
+    }
+  }
+  loading.style.display = "block";
+  let res = await post(GAS, {
+    type: 19,
+    data: JSON.stringify({
+      lists: data,
+      database: database,
+    }),
+  });
+  res = JSON.parse(JSON.parse(res).messege);
+  if (res.result === true) {
+    document.querySelector("#statusModel img").src = "./asset/img/verified.png";
+    document.querySelector("#statusModel h3").innerText = "Success";
+    document.querySelector("#statusModel p").innerText =
+      "Files added to Most commonly used.";
+    $("#statusModel").modal("show");
+  } else {
+    document.querySelector("#statusModel img").src = "./asset/img/error.png";
+    document.querySelector("#statusModel h3").innerText = "Error";
+    document.querySelector("#statusModel p").innerText =
+      "Failed to add files to Most commonly used.";
+    $("#statusModel").modal("show");
+  }
+  moveToCommonlyUsed.disabled = false;
+  moveToCommonlyUsed.innerText = "Add to Most commonly used";
+  loading.style.display = "none";
+};
+
 let selectAll = false;
 const selectAllBtnClicked = () => {
   let selectFilesList = document.querySelectorAll("#selectFilesList input");
   let deleteBtn = document.querySelector("#deleteBtn");
+  let moveToCommonlyUsed = document.querySelector("#moveToCommonlyUsed");
   $(deleteBtn).hide();
+  $(moveToCommonlyUsed).hide();
   selectAll = !selectAll;
   for (let input of selectFilesList) {
     input.checked = selectAll;
@@ -223,6 +302,7 @@ const selectAllBtnClicked = () => {
 
   if (selectAll) {
     $(deleteBtn).show();
+    $(moveToCommonlyUsed).show();
   }
 };
 
@@ -243,11 +323,9 @@ const showData = (data, type = "") => {
     idList.push(id);
     result += `
     <div class="input-checkbox">
-      <input index="${
-        id.id
-      }" onchange="checkedUpdate()" type="checkbox" name="" id="file_${
-      id.id
-    }" />
+      <input index="${id.id}" file="${
+      id.file
+    }" onchange="checkedUpdate()" type="checkbox" name="" id="file_${id.id}" />
       <label for="file_${id.id}" style="color: #004a7f"
         >${x[1].substr(1)}</label
       >
@@ -275,9 +353,12 @@ const addDocumentsLoad = (data) => {
   let loading = document.querySelector("#loading");
   let selectAllBtn = document.querySelector("#selectAllBtn");
   let deleteBtn = document.querySelector("#deleteBtn");
+  let moveToCommonlyUsed = document.querySelector("#moveToCommonlyUsed");
+
   selectAllBtn.onclick = selectAllBtnClicked;
   selectAll = false;
   deleteBtn.onclick = deleteFiles;
+  moveToCommonlyUsed.onclick = addToCommonlyUsed;
 
   document.querySelector("#customFile").onchange = (e) => {
     fileListCreate(e.target.files);
@@ -388,4 +469,4 @@ const fileUpload = (file) => {
 };
 
 window.removeFileFromList = removeFileFromList;
-export { documentsPage, addDocumentsLoad };
+export { addDocumentsLoad, documentsPage };

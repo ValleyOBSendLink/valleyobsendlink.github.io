@@ -1,8 +1,15 @@
 import { d } from "../../asset/js/custom.lib.js";
-import { searchLoad, sortingLoad, download, breakLine, createPdf } from "../common.js";
-import { login, loginLoad } from "./login.js";
+import {
+  breakLine,
+  createPdf,
+  download,
+  searchLoad,
+  sortingLoad,
+} from "../common.js";
+import { commonlyUsedPage, commonlyUsedPageLoad } from "./commonlyUsedPage.js";
 import { addDocumentsLoad, documentsPage } from "./documentsPage.js";
-import { userPage, addUserLoad } from "./userPage.js";
+import { login, loginLoad } from "./login.js";
+import { addUserLoad, userPage } from "./userPage.js";
 
 const commonLoad = (type = "") => {
   usersLoad();
@@ -43,6 +50,30 @@ const usersLoad = () => {
   };
 };
 
+const commonlyUsedLoad = () => {
+  const { GAS, post, database, backup } = d;
+  let button = document.querySelector("#showMostCommonlyUsedBtn");
+  button.onclick = () => {
+    document.querySelector("#root").innerHTML = commonlyUsedPage;
+    post(GAS, {
+      type: 8,
+      data: JSON.stringify({
+        database: database,
+      }),
+    })
+      .then(async (res) => {
+        res = JSON.parse(JSON.parse(res).messege);
+        const { result, data, commonlyUsedData } = res;
+        if (result) {
+          commonlyUsedPageLoad(data, commonlyUsedData);
+        }
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  };
+};
+
 const documentsLoad = () => {
   const { GAS, post, database, backup } = d;
   let button = document.querySelector("#documentsBtn");
@@ -59,6 +90,7 @@ const documentsLoad = () => {
         const { result, data } = res;
         if (result) {
           addDocumentsLoad(data);
+          commonlyUsedLoad();
         }
       })
       .catch((err) => {
@@ -235,4 +267,4 @@ const logoutLoad = () => {
   };
 };
 
-export { commonLoad, searchLoad, sortingLoad, download, breakLine, createPdf };
+export { breakLine, commonLoad, createPdf, download, searchLoad, sortingLoad };

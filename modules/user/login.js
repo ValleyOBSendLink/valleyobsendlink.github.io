@@ -115,7 +115,15 @@ const loginLoad = () => {
       }),
     }).then(async (res) => {
       res = JSON.parse(JSON.parse(res).messege);
-      const { result, data, messege, history, database, favorite} = res;
+      const {
+        result,
+        data,
+        messege,
+        history,
+        database,
+        favorite,
+        commonlyUsedData,
+      } = res;
       if (result && messege != "ip") {
         d.userEmail = username.value.trim();
         document.querySelector("#root").innerHTML = homePage;
@@ -123,7 +131,7 @@ const loginLoad = () => {
         d.history = history;
         d.$database = database;
         d.favorite = favorite;
-        homeLoad(data);
+        homeLoad(data, commonlyUsedData);
       } else if (result && messege == "ip") {
         document.querySelector("#login-error").innerText =
           "Unauthorized Access. Contact System Administrator.";

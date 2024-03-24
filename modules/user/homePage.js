@@ -1,5 +1,4 @@
 import { d } from "../../asset/js/custom.lib.js";
-import IDB from "../../asset/js/idb.js";
 import { commonLoad, searchLoad, sortingLoad } from "./common.js";
 
 const homePage = `
@@ -249,56 +248,73 @@ const showData = (data, type = "") => {
   type__ = type;
 };
 
-const showCommonUsedData = (data) => {
-  let commonUsedFilesList = document.querySelector("#commonUsedFiles");
+const showCommonUsedData = (data, commonlyUsedData) => {
+  let selectFilesList = document.querySelector("#commonUsedFiles");
+  let loading = document.querySelector("#loading");
   let result = "";
-  let index = 1;
-  for (let x of data) {
+
+  let index = 0;
+  for (let x of commonlyUsedData) {
+    let id = {
+      id: index,
+      file: x[0],
+    };
+
+    let name = data.find((y) => y[1] === x[0])?.[0];
+
+    if (!name) continue;
+
     result += `
     <div class="input-checkbox">
-      <input fileName="${x[0].substr(1)}" fileId="${x[1].substr(
-      1
-    )}" index="${index}" type="checkbox" name="" id="file_used_${index}" />
+      <input fileName="${name.substr(1)}" fileId="${x[0].substr(1)}" index="${
+      id.id
+    }" type="checkbox" name="" id="common_file_${id.id}" />
       <label style="color: #004a7f"
-        ><a href="https://drive.google.com/uc?export=view&id=${x[1].substr(1)}"
-        target="_blank">${x[0].substr(1)}</a></label
+        ><a href="https://drive.google.com/uc?export=view&id=${x[0].substr(1)}"
+        target="_blank">${name.substr(1)}</a></label
       >
     </div>
     `;
     index++;
   }
 
-  commonUsedFilesList.innerHTML = `
+  selectFilesList.innerHTML = `
 	${result}
   `;
+
+  console.log(data, commonlyUsedData, result);
+
+  loading.style.display = "none";
 };
 
-const homeLoad = async (data) => {
+const homeLoad = async (data, commonlyUsedData) => {
   const { post, GAS, database, favorite, userEmail } = d;
-  const idb = new IDB("com.valleyobSendEmailApp");
-  await idb.createDataBase(userEmail + "_commonUsed", {
-    keyPath: "id",
-  });
+  // const idb = new IDB("com.valleyobSendEmailApp");
+  // await idb.createDataBase(userEmail + "_commonUsed", {
+  //   keyPath: "id",
+  // });
 
   commonLoad();
   showData(data);
 
-  let commonUsedDataAll = await idb.getAllValues("id");
+  // let commonUsedDataAll = await idb.getAllValues("id");
 
-  let allDataObj = {};
-  for (let x of data) {
-    allDataObj[x[1].substr(1)] = x;
-  }
+  // let allDataObj = {};
+  // for (let x of data) {
+  //   allDataObj[x[1].substr(1)] = x;
+  // }
 
-  for (let x of commonUsedDataAll) {
-    if (!allDataObj[x]) {
-      await idb.remove(x);
-    }
-  }
+  // for (let x of commonUsedDataAll) {
+  //   if (!allDataObj[x]) {
+  //     await idb.remove(x);
+  //   }
+  // }
 
-  let commonUsedData = await idb.getAll();
-  commonUsedData.sort((a, b) => b.used - a.used);
-  showCommonUsedData(commonUsedData.map((x) => x.value));
+  // let commonUsedData = await idb.getAll();
+  // commonUsedData.sort((a, b) => b.used - a.used);
+  // showCommonUsedData(commonUsedData.map((x) => x.value));
+
+  showCommonUsedData(data, commonlyUsedData);
   searchLoad(data, showData, [0], null, String(favorite).split("\n"));
   let dropdownMenuAll = document.querySelectorAll(".dropdown-menu a");
   let sortValue = document.querySelector("#sortValue");
@@ -355,30 +371,30 @@ const homeLoad = async (data) => {
           name: input.getAttribute("fileName"),
         });
 
-        let isExistOnCommonUsed = await idb.get(input.getAttribute("fileId"));
+        // let isExistOnCommonUsed = await idb.get(input.getAttribute("fileId"));
 
-        if (!isExistOnCommonUsed) {
-          await idb.add({
-            id: input.getAttribute("fileId"),
-            value: [
-              "x" + input.getAttribute("fileName"),
-              "x" + input.getAttribute("fileId"),
-            ],
-            used: 1,
-            ts: new Date().getTime(),
-          });
-        } else {
-          await idb.put(input.getAttribute("fileId"), {
-            used: isExistOnCommonUsed.used + 1,
-            ts: new Date().getTime(),
-          });
-        }
+        // if (!isExistOnCommonUsed) {
+        //   await idb.add({
+        //     id: input.getAttribute("fileId"),
+        //     value: [
+        //       "x" + input.getAttribute("fileName"),
+        //       "x" + input.getAttribute("fileId"),
+        //     ],
+        //     used: 1,
+        //     ts: new Date().getTime(),
+        //   });
+        // } else {
+        //   await idb.put(input.getAttribute("fileId"), {
+        //     used: isExistOnCommonUsed.used + 1,
+        //     ts: new Date().getTime(),
+        //   });
+        // }
       }
     }
 
-    let commonUsedData = await idb.getAll();
-    commonUsedData.sort((a, b) => b.used - a.used);
-    showCommonUsedData(commonUsedData.map((x) => x.value));
+    // let commonUsedData = await idb.getAll();
+    // commonUsedData.sort((a, b) => b.used - a.used);
+    // showCommonUsedData(commonUsedData.map((x) => x.value));
 
     if (data.length == 0) {
       error.innerText = "Please select a files.";

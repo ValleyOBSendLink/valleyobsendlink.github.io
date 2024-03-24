@@ -1,8 +1,14 @@
 import { d } from "../../asset/js/custom.lib.js";
-import { searchLoad, sortingLoad, download, breakLine, createPdf } from "../common.js";
-import { login, loginLoad } from "./login.js";
-import { historyPage, historyLoad } from "./historyPage.js";
+import {
+  breakLine,
+  createPdf,
+  download,
+  searchLoad,
+  sortingLoad,
+} from "../common.js";
+import { historyLoad, historyPage } from "./historyPage.js";
 import { homeLoad, homePage } from "./homePage.js";
+import { login, loginLoad } from "./login.js";
 
 const commonLoad = () => {
   homeLoad_();
@@ -23,9 +29,9 @@ const homeLoad_ = () => {
     })
       .then(async (res) => {
         res = JSON.parse(JSON.parse(res).messege);
-        const { result, data } = res;
+        const { result, data, commonlyUsedData } = res;
         if (result) {
-          homeLoad(data);
+          homeLoad(data, commonlyUsedData);
         }
       })
       .catch((err) => {
@@ -63,4 +69,4 @@ const inputPrevent = (e) => {
 
 window.inputPrevent = inputPrevent;
 
-export { commonLoad, searchLoad, sortingLoad, download, breakLine, createPdf };
+export { breakLine, commonLoad, createPdf, download, searchLoad, sortingLoad };
