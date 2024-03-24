@@ -108,24 +108,12 @@ const homePage = `
       <section class="user-backup-sec">
         <div class="container-fluid">
           <div class="user-backup-table-wrapp">
-            <div class="dropdown-btn-wrapp">
-              <div class="dropdown custom-dropdown">
-                <button
-                  class="dropdown-toggle"
-                  type="button"
-                  data-toggle="dropdown"
-                  id="sortValue"
-                >
-                  Sort by Name
-                </button>
-                <div class="dropdown-menu">
-                  <a class="dropdown-item" href="javascript:void(0);">Sort by Name</a>
-                  <a class="dropdown-item" href="javascript:void(0);">Sort by Number</a>
-                </div>
-              </div>
+            <div style="position: absolute; left: -120px;">
+              <span style="display: none" id="sortValue">Sort By Name</span>
+              <img id="sortValueBtn" style="width: 50px; cursor: pointer;" src="./asset/img/imgpsh_fullsize_anim.png" alt="Icon" />
             </div>
 
-            <div id="selectFilesListDiv" class="file-upload-section-wrapp" style="max-width: 1200px">
+            <div id="selectFilesListDiv" class="file-upload-section-wrapp">
               <div class="row">
                 <div class="col-md-6">
                   <div id="selectFilesList" class="select-file-wrapp" style="margin-top: 67px">
@@ -282,13 +270,35 @@ const showCommonUsedData = (data, commonlyUsedData) => {
 	${result}
   `;
 
-  console.log(data, commonlyUsedData, result);
-
   loading.style.display = "none";
 };
 
 const homeLoad = async (data, commonlyUsedData) => {
   const { post, GAS, database, favorite, userEmail } = d;
+
+  let sortValueBtn = document.querySelector("#sortValueBtn");
+  let sortValue = document.querySelector("#sortValue");
+  let sortingBtn = document.querySelector("#sortingBtn");
+
+  sortValue.innerText = "Sort By Name";
+
+  sortValueBtn.onclick = () => {
+    if (sortValue.innerText == "Sort By Name") {
+      sortValue.innerText = "Sort By Number";
+    } else {
+      sortValue.innerText = "Sort By Name";
+    }
+
+    sortingLoad(
+      0,
+      data__,
+      type__,
+      showData,
+      undefined,
+      document.querySelector("#sortValue")
+    );
+    sortingBtn.click();
+  };
   // const idb = new IDB("com.valleyobSendEmailApp");
   // await idb.createDataBase(userEmail + "_commonUsed", {
   //   keyPath: "id",
@@ -316,9 +326,6 @@ const homeLoad = async (data, commonlyUsedData) => {
 
   showCommonUsedData(data, commonlyUsedData);
   searchLoad(data, showData, [0], null, String(favorite).split("\n"));
-  let dropdownMenuAll = document.querySelectorAll(".dropdown-menu a");
-  let sortValue = document.querySelector("#sortValue");
-  let sortingBtn = document.querySelector("#sortingBtn");
   let favoriteLists = document.querySelector("#favoriteLists");
 
   favoriteLists.innerHTML =
@@ -326,20 +333,20 @@ const homeLoad = async (data, commonlyUsedData) => {
     String(favorite).split("\n").join("</option><option>") +
     "</option>";
 
-  for (let x of dropdownMenuAll) {
-    x.onclick = () => {
-      sortValue.innerText = x.innerText;
-      sortingLoad(
-        0,
-        data__,
-        type__,
-        showData,
-        undefined,
-        document.querySelector("#sortValue")
-      );
-      sortingBtn.click();
-    };
-  }
+  // for (let x of dropdownMenuAll) {
+  //   x.onclick = () => {
+  //     sortValue.innerText = x.innerText;
+  //     sortingLoad(
+  //       0,
+  //       data__,
+  //       type__,
+  //       showData,
+  //       undefined,
+  //       document.querySelector("#sortValue")
+  //     );
+  //     sortingBtn.click();
+  //   };
+  // }
   let emailForm = document.querySelector("#sendEmailForm");
   let email = document.querySelector("#Email");
   let button = document.querySelector("#emailSendBtn");
