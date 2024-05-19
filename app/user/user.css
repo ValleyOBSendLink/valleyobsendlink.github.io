@@ -1,0 +1,60 @@
+.user-backup-table-wrapp {
+  position: relative;
+}
+
+.custom-btn {
+  padding: 15px;
+}
+
+.login-page-sec .login-form-dv .custom-btn {
+  margin-top: 15px;
+}
+
+.verification-bx-wrapp a {
+  display: block;
+  border: 2px solid #004a7f;
+  padding: 30px;
+  text-align: center;
+  color: #004a7f;
+}
+
+.verification-bx-wrapp .txtBig {
+  font-size: 80px;
+  line-height: 100px;
+  font-weight: bold;
+  margin: 30px 0;
+}
+
+.verification-bx-wrapp .txt {
+  font-weight: 600;
+}
+
+.verification-bx-wrapp:hover a {
+  background-color: #004a7f;
+  color: #fff;
+}
+
+.file-email-send-bx {
+  position: relative;
+  width: 100%;
+  max-width: 350px;
+  margin-left: 50px;
+}
+
+.file-email-send-bx .form-control {
+  font-size: 16px;
+  font-weight: 500;
+  padding: 10px 15px;
+}
+
+.file-email-send-bx .sendBtn {
+  position: absolute;
+  right: 4px;
+  top: 4px;
+  padding: 7px 12px;
+}
+
+.insurance-verification-wrapp {
+  max-width: 1200px;
+  margin: 0 auto;
+}
