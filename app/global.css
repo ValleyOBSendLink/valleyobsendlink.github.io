@@ -1295,3 +1295,44 @@ button:disabled {
 .user-backup-table-wrapp .custom-table th:nth-child(3) {
   min-width: 200px;
 }
+
+.handle {
+  cursor: grab;
+  margin-top: 4px;
+}
+.sortable-ghost {
+  opacity: 0.5;
+  background-color: #f2f3f5;
+  border: 1px solid #c1c1c1;
+  border-radius: 5px;
+  padding: 5px 10px;
+  transition: all 0.3s;
+}
+
+.sortable-chosen {
+  background-color: #f2f3f5;
+  border: 1px solid #c1c1c1;
+  border-radius: 5px;
+  transition: all 0.3s;
+  padding: 5px 10px;
+}
+
+.sortable-drag {
+  background-color: #f2f3f5;
+  border: 1px solid #c1c1c1;
+  border-radius: 5px;
+  transition: all 0.3s;
+  padding: 5px 10px;
+}
+
+.make-height-sm2 {
+  height: 35px;
+  overflow: hidden;
+  transition: all 0.3s;
+}
+
+.make-height-sm label,
+.make-height-sm .input-checkbox {
+  margin-bottom: 0 !important;
+  transition: all 0.3s;
+}

@@ -438,3 +438,22 @@ function RemoveMostUsed_({ ids }) {
 }
 
 ACTIONS["/admin/remove-most-used"] = AdminCheck_(RemoveMostUsed_);
+
+function SaveMostUsedOrder_({ order }) {
+  if (!order) {
+    throw new Error("Order is required!");
+  }
+
+  if (!Array.isArray(order)) {
+    throw new Error("Order must be array!");
+  }
+
+  let ss = SpreadsheetApp.openByUrl(CONFIG.dbURL);
+  let sheet = ss.getSheetByName(CONFIG.commonlyUsedDB);
+
+  sheet.getRange(2, 1, order.length, order[0].length).setValues(order);
+
+  return "success";
+}
+
+ACTIONS["/admin/save-most-used-order"] = AdminCheck_(SaveMostUsedOrder_);
