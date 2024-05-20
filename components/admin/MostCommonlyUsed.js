@@ -43,6 +43,7 @@ export default function MostCommonlyUsed() {
     title: "Are you sure you want to delete all history?",
     type: "delete",
     selectedDocuments: [],
+    itemMinimize: null,
     minimize: false,
     isUpdate: false,
     minimizeAll: false,
@@ -188,7 +189,7 @@ export default function MostCommonlyUsed() {
                       <div className="col-md-12">
                         <div className="select-file-wrapp mt-3">
                           <ReactSortable
-                            list={finalData}
+                            list={data}
                             setList={(newState) => {
                               mutate(newState, false);
                             }}
@@ -280,66 +281,118 @@ export default function MostCommonlyUsed() {
                                   </div>
 
                                   <div className="ml-4">
-                                    {files.map(
-                                      ({ name, id: fileId }, index) => {
-                                        let id = `${mostId}_${fileId}`;
-                                        if (
-                                          (state.minimize ||
-                                            state.minimizeAll) &&
-                                          index > 0
-                                        )
-                                          return null;
-                                        return (
-                                          <div
-                                            key={id}
-                                            className="input-checkbox"
-                                          >
-                                            {!(
-                                              state.minimize ||
-                                              state.minimizeAll
-                                            ) && (
-                                              <input
-                                                type="checkbox"
-                                                id={`file_${id}`}
-                                                checked={state.selectedDocuments.includes(
-                                                  id
-                                                )}
-                                                onChange={(e) => {
-                                                  if (e.target.checked) {
-                                                    setState((state) => {
-                                                      return {
-                                                        ...state,
-                                                        selectedDocuments: [
-                                                          ...state.selectedDocuments,
-                                                          id,
-                                                        ],
-                                                      };
-                                                    });
-                                                  } else {
-                                                    setState((state) => {
-                                                      return {
-                                                        ...state,
-                                                        selectedDocuments:
-                                                          state.selectedDocuments.filter(
-                                                            (item) =>
-                                                              item !== id
-                                                          ),
-                                                      };
-                                                    });
-                                                  }
-                                                }}
-                                              />
-                                            )}
-                                            <label
-                                              htmlFor={`file_${id}`}
-                                              style={{ color: "#004a7f" }}
-                                            >
-                                              {name}
-                                            </label>
-                                          </div>
+                                    <ReactSortable
+                                      list={files}
+                                      setList={(newState) => {
+                                        mutate(
+                                          data.map((item) => {
+                                            if (item.id === mostId) {
+                                              return {
+                                                ...item,
+                                                files: newState,
+                                              };
+                                            }
+                                            return item;
+                                          }),
+                                          false
                                         );
-                                      }
-                                    )}
+                                      }}
+                                      onUpdate={() => {
+                                        setState((state) => {
+                                          return { ...state, isUpdate: true };
+                                        });
+                                      }}
+                                      animation={150}
+                                      onChoose={() => {
+                                        setState((state) => {
+                                          return {
+                                            ...state,
+                                            itemMinimize: mostId,
+                                          };
+                                        });
+                                      }}
+                                      onUnchoose={() => {
+                                        setState((state) => {
+                                          return {
+                                            ...state,
+                                            itemMinimize: null,
+                                          };
+                                        });
+                                      }}
+                                      chosenClass="sortable-chosen-hide-padding"
+                                      ghostClass="sortable-ghost-hide-padding"
+                                      dragClass="sortable-drag-hide-padding"
+                                    >
+                                      {files.map(
+                                        ({ name, id: fileId }, index) => {
+                                          let id = `${mostId}_${fileId}`;
+                                          if (
+                                            (state.minimize ||
+                                              state.minimizeAll) &&
+                                            index > 0
+                                          )
+                                            return (
+                                              <div
+                                                key={id}
+                                                className="hidden"
+                                              ></div>
+                                            );
+                                          return (
+                                            <div
+                                              key={id}
+                                              className={`input-checkbox ${
+                                                state.itemMinimize == mostId
+                                                  ? "make-height-sm-item"
+                                                  : ""
+                                              }`}
+                                            >
+                                              {!(
+                                                state.minimize ||
+                                                state.minimizeAll
+                                              ) && (
+                                                <input
+                                                  type="checkbox"
+                                                  id={`file_${id}`}
+                                                  checked={state.selectedDocuments.includes(
+                                                    id
+                                                  )}
+                                                  onChange={(e) => {
+                                                    if (e.target.checked) {
+                                                      setState((state) => {
+                                                        return {
+                                                          ...state,
+                                                          selectedDocuments: [
+                                                            ...state.selectedDocuments,
+                                                            id,
+                                                          ],
+                                                        };
+                                                      });
+                                                    } else {
+                                                      setState((state) => {
+                                                        return {
+                                                          ...state,
+                                                          selectedDocuments:
+                                                            state.selectedDocuments.filter(
+                                                              (item) =>
+                                                                item !== id
+                                                            ),
+                                                        };
+                                                      });
+                                                    }
+                                                  }}
+                                                />
+                                              )}
+                                              <label
+                                                htmlFor={`file_${id}`}
+                                                style={{ color: "#004a7f" }}
+                                              >
+                                                {name}
+                                              </label>
+                                            </div>
+                                          );
+                                        }
+                                      )}
+                                    </ReactSortable>
                                   </div>
                                 </div>
                               );

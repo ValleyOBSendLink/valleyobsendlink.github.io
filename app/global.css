@@ -1300,7 +1300,8 @@ button:disabled {
   cursor: grab;
   margin-top: 4px;
 }
-.sortable-ghost {
+.sortable-ghost,
+.sortable-ghost-hide-padding {
   opacity: 0.5;
   background-color: #f2f3f5;
   border: 1px solid #c1c1c1;
@@ -1309,7 +1310,8 @@ button:disabled {
   transition: all 0.3s;
 }
 
-.sortable-chosen {
+.sortable-chosen,
+.sortable-chosen-hide-padding {
   background-color: #f2f3f5;
   border: 1px solid #c1c1c1;
   border-radius: 5px;
@@ -1317,12 +1319,21 @@ button:disabled {
   padding: 5px 10px;
 }
 
-.sortable-drag {
+.sortable-drag,
+.sortable-drag-hide-padding {
   background-color: #f2f3f5;
   border: 1px solid #c1c1c1;
   border-radius: 5px;
   transition: all 0.3s;
   padding: 5px 10px;
+}
+
+.sortable-chosen-hide-padding,
+.sortable-drag-hide-padding,
+.sortable-ghost-hide-padding {
+  padding: 0;
+  border: none;
+  border-radius: 0;
 }
 
 .make-height-sm2 {
