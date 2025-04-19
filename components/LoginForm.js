@@ -61,7 +61,7 @@ export default function LoginForm({ type = "admin" }) {
           `${type}TokenInfo`,
           JSON.stringify({
             token: responseJSON.data.token,
-            expire: new Date().getTime() + 1000 * 60 * 60 * 6,
+            expire: new Date().getTime() + 1000 * 60 * 60 * 12,
           })
         );
 
